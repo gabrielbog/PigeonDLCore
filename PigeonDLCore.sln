@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32804.467
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PigeonDLCore", "PigeonDLCore\PigeonDLCore.csproj", "{8900B352-C233-4C67-8725-DC7B566A2BEA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8900B352-C233-4C67-8725-DC7B566A2BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8900B352-C233-4C67-8725-DC7B566A2BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8900B352-C233-4C67-8725-DC7B566A2BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8900B352-C233-4C67-8725-DC7B566A2BEA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F6E10420-E095-4A2E-9E6A-D2184AB86159}
+	EndGlobalSection
+EndGlobal
