@@ -7,11 +7,13 @@ namespace PigeonDLCore.Controllers
 {
     public class FolderController : Controller
     {
-        private Repository.FolderRepository _repository;
+        private Repository.FolderRepository _folderRepository;
+        private Repository.FileRepository _fileRepository;
 
         public FolderController (ApplicationDbContext dbContext)
         {
-            _repository = new Repository.FolderRepository (dbContext);
+            _folderRepository = new Repository.FolderRepository (dbContext);
+            _fileRepository = new Repository.FileRepository (dbContext);
         }
 
         // GET: FolderController
@@ -22,7 +24,7 @@ namespace PigeonDLCore.Controllers
             if (userID != null)
             {
                 //user is logged in
-                var folders = _repository.GetFoldersByIDUser(userID);
+                var folders = _folderRepository.GetFoldersByIDUser(userID);
                 return View("Index", folders);
             }
             else
@@ -49,32 +51,37 @@ namespace PigeonDLCore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
         {
-            try
+            if (ModelState.IsValid)
             {
-                Models.Folder model = new Models.Folder();
-                model.IDUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var task = TryUpdateModelAsync(model);
-                task.Wait();
+                try
+                {
+                    Console.WriteLine(ModelState.IsValid);
+                    Models.Folder model = new Models.Folder();
+                    model.IDUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    var task = TryUpdateModelAsync(model);
+                    task.Wait();
 
-                bool res = _repository.InsertFolder(model);
-                if(res)
-                    return RedirectToAction(nameof(Index));
-                else
+                    bool res = _folderRepository.InsertFolder(model);
+                    if (res)
+                        return RedirectToAction(nameof(Index));
+                    else
+                        return View("Create");
+                }
+                catch
+                {
                     return View("Create");
+                }
             }
-            catch
+            else
             {
                 return View("Create");
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
         // GET: FolderController/Edit/5
         public ActionResult Edit(Guid id)
         {
-            var model = _repository.GetFolderByIDFolder(id);
-            model.Password = ""; //by default it shows the hash, hide it
+            var model = _folderRepository.GetFolderByIDFolder(id);
             return View("Edit", model);
         }
 
@@ -89,7 +96,7 @@ namespace PigeonDLCore.Controllers
                 var task = TryUpdateModelAsync(model);
                 task.Wait();
 
-                bool res = _repository.UpdateFolder(model);
+                bool res = _folderRepository.UpdateFolder(model);
                 if (res)
                     return RedirectToAction(nameof(Index));
                 else
@@ -106,7 +113,7 @@ namespace PigeonDLCore.Controllers
         // GET: FolderController/Delete/5
         public ActionResult Delete(Guid id)
         {
-            var model = _repository.GetFolderByIDFolder(id);
+            var model = _folderRepository.GetFolderByIDFolder(id);
             return View("Delete", model);
         }
 
@@ -117,8 +124,18 @@ namespace PigeonDLCore.Controllers
         {
             try
             {
-                _repository.DeleteFolder(id);
-                return RedirectToAction(nameof(Index));
+                List<Models.File>_fileList = _fileRepository.GetFilesByIDFolder(id);
+                if(_fileList.Count == 0)
+                {
+                    //folder is empty
+                    _folderRepository.DeleteFolder(id);
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    //folder still has files
+                    return View("Delete");
+                }
             }
             catch
             {

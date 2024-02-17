@@ -36,25 +36,30 @@ namespace PigeonDLCore.Repository
             return fileList;
         }
 
+        public File GetFileByURL(string URL)
+        {
+            return dbContext.Files.FirstOrDefault(x => x.URL == URL);
+        }
+
         public void InsertFile(File file)
         {
+            Console.WriteLine(file.IDFolder.ToString());
             file.IDFile = Guid.NewGuid();
+            file.DateUploaded = DateTime.Now;
+            file.Downloads = 0;
 
             //generate url hash
             using (MD5 md5 = MD5.Create())
             {
                 byte[] hashValue = md5.ComputeHash(Encoding.UTF8.GetBytes(file.IDFile.ToString() + file.Name + file.DateUploaded.ToString() + file.Size));
-                file.URL = Encoding.Default.GetString(hashValue);
-            }
+                StringBuilder sBuilder = new StringBuilder();
 
-            //generate password hash
-            if(file.Password != null)
-            {
-                using(SHA256 sha256 = SHA256.Create())
+                for (int i = 0; i < hashValue.Length; i++)
                 {
-                    byte[] hashValue = sha256.ComputeHash(Encoding.UTF8.GetBytes(file.Password));
-                    file.Password = Encoding.Default.GetString(hashValue);
+                    sBuilder.Append(hashValue[i].ToString("x2"));
                 }
+
+                file.URL = sBuilder.ToString();
             }
 
             dbContext.Files.Add(file);
@@ -75,7 +80,6 @@ namespace PigeonDLCore.Repository
                 existingFile.Size = file.Size;
                 existingFile.URL = file.URL;
                 existingFile.Downloads = file.Downloads;
-                existingFile.Password = file.Password;
                 dbContext.SaveChanges();
             }
         }

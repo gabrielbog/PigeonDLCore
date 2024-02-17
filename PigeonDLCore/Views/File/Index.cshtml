@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<PigeonDLCore.Models.File>
+@using System.Security.Claims
 
 @{
     ViewData["Title"].ToString();
@@ -7,9 +8,13 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<p>
-    <a asp-action="Upload">Upload File</a>
-</p>
+@if (ViewData["AllowUploadDelete"].ToString() == "true")
+{
+    <p>
+        @Html.ActionLink("Upload File", "Upload", new { URL=ViewData["URL"] })
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -37,32 +42,38 @@
             <th>
                 @Html.DisplayNameFor(model => model.DateUploaded)
             </th>
-            <!--<th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>-->
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Size)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Downloads)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateUploaded)
-            </td>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Size)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Downloads)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateUploaded)
+        </td>
+        @if (ViewData["AllowUploadDelete"].ToString() == "true")
+        {
             <td>
                 @Html.ActionLink("Details", "Details", new { URL=item.URL }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.IDFile })
+                @Html.ActionLink("Delete", "Delete", new { URL=item.URL })
             </td>
-        </tr>
+        }
+        else
+        {
+            <td>
+                @Html.ActionLink("Details", "Details", new { URL=item.URL })
+            </td>
+        }
+    </tr>
 }
     </tbody>
 </table>

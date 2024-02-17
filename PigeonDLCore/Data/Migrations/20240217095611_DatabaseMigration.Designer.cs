@@ -12,7 +12,7 @@ using PigeonDLCore.Data;
 namespace PigeonDLCore.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240215152325_DatabaseMigration")]
+    [Migration("20240217095611_DatabaseMigration")]
     partial class DatabaseMigration
     {
         /// <inheritdoc />
@@ -243,9 +243,6 @@ namespace PigeonDLCore.Data.Migrations
                         .HasColumnType("int")
                         .HasDefaultValueSql("0");
 
-                    b.Property<Guid>("FolderIDFolder")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("IDFolder")
                         .HasColumnType("uniqueidentifier");
 
@@ -257,19 +254,14 @@ namespace PigeonDLCore.Data.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(200)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<double>("Size")
-                        .HasColumnType("float");
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("URL")
                         .IsRequired()
                         .HasColumnType("varchar(32)");
 
                     b.HasKey("IDFile");
-
-                    b.HasIndex("FolderIDFolder");
 
                     b.HasIndex("IDUser");
 
@@ -298,9 +290,6 @@ namespace PigeonDLCore.Data.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(200)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("varchar(256)");
-
                     b.Property<string>("URL")
                         .IsRequired()
                         .HasColumnType("varchar(32)");
@@ -326,9 +315,6 @@ namespace PigeonDLCore.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
 
-                    b.Property<Guid>("FolderIDFolder")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("IDFolder")
                         .HasColumnType("uniqueidentifier");
 
@@ -337,8 +323,6 @@ namespace PigeonDLCore.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("IDShared");
-
-                    b.HasIndex("FolderIDFolder");
 
                     b.HasIndex("IDUser");
 
@@ -422,19 +406,11 @@ namespace PigeonDLCore.Data.Migrations
 
             modelBuilder.Entity("PigeonDLCore.Models.File", b =>
                 {
-                    b.HasOne("PigeonDLCore.Models.Folder", "Folder")
-                        .WithMany()
-                        .HasForeignKey("FolderIDFolder")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Id")
                         .WithMany()
                         .HasForeignKey("IDUser")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Folder");
 
                     b.Navigation("Id");
                 });
@@ -452,19 +428,11 @@ namespace PigeonDLCore.Data.Migrations
 
             modelBuilder.Entity("PigeonDLCore.Models.FolderShared", b =>
                 {
-                    b.HasOne("PigeonDLCore.Models.Folder", "Folder")
-                        .WithMany()
-                        .HasForeignKey("FolderIDFolder")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Id")
                         .WithMany()
                         .HasForeignKey("IDUser")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Folder");
 
                     b.Navigation("Id");
                 });

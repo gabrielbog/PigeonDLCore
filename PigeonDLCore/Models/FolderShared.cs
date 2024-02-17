@@ -15,13 +15,13 @@ namespace PigeonDLCore.Models
         public string IDUser { get; set; }
         public virtual IdentityUser Id { get; set; }
 
-        public Guid IDFolder { get; set; }
+        public Guid IDFolder { get; set; } //constraint issue despite IDFolder existing, removing FK for now
 
         //[Required]
         public DateTime DateAdded { get; set; }
 
         //[ForeignKey("IDFolder")]
-        [DeleteBehavior(DeleteBehavior.Restrict)]
-        public virtual Folder Folder { get; set; }
+        //[DeleteBehavior(DeleteBehavior.Cascade)]
+        //public virtual Folder Folder { get; set; }
     }
 }

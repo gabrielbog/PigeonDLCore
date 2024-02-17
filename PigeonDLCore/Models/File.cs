@@ -15,7 +15,7 @@ namespace PigeonDLCore.Models
         public string IDUser { get; set; }
         public virtual IdentityUser Id { get; set; }
 
-        public Guid IDFolder { get; set; }
+        public Guid IDFolder { get; set; } //constraint issue despite IDFolder existing, removing FK for now
 
         //[Required]
         [Column(TypeName = "varchar(200)")]
@@ -25,7 +25,7 @@ namespace PigeonDLCore.Models
         public DateTime DateUploaded { get; set; }
 
         //[Required]
-        public double Size { get; set; }
+        public long Size { get; set; }
 
         //[Required]
         [Column(TypeName = "varchar(32)")] //md5
@@ -34,14 +34,11 @@ namespace PigeonDLCore.Models
         //[Required]
         public int Downloads { get; set; }
 
-        [Column(TypeName = "varchar(256)")] //sha-256
-        public string? Password { get; set; }
-
         [NotMapped]
         public IFormFile UploadedFile { get; set; } //the file itself
 
         //[ForeignKey("IDFolder")]
-        [DeleteBehavior(DeleteBehavior.Restrict)]
-        public virtual Folder Folder { get; set; }
+        //[DeleteBehavior(DeleteBehavior.Cascade)]
+        //public virtual Folder Folder { get; set; }
     }
 }

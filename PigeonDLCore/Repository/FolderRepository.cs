@@ -67,23 +67,6 @@ namespace PigeonDLCore.Repository
                 folder.URL = sBuilder.ToString();
             }
 
-            //generate password hash
-            if (folder.Password != null)
-            {
-                using (SHA256 sha256 = SHA256.Create())
-                {
-                    byte[] hashValue = sha256.ComputeHash(Encoding.UTF8.GetBytes(folder.Password));
-                    StringBuilder sBuilder = new StringBuilder();
-
-                    for (int i = 0; i < hashValue.Length; i++)
-                    {
-                        sBuilder.Append(hashValue[i].ToString("x2"));
-                    }
-
-                    folder.Password = sBuilder.ToString();
-                }
-            }
-
             dbContext.Folders.Add(folder);
             dbContext.SaveChanges();
 
@@ -118,25 +101,6 @@ namespace PigeonDLCore.Repository
 
                     existingfolder.URL = sBuilder.ToString();
                 }
-
-                //remake existing password hash
-                if (folder.Password != null)
-                {
-                    using (SHA256 sha256 = SHA256.Create())
-                    {
-                        byte[] hashValue = sha256.ComputeHash(Encoding.UTF8.GetBytes(folder.Password));
-                        StringBuilder sBuilder = new StringBuilder();
-
-                        for (int i = 0; i < hashValue.Length; i++)
-                        {
-                            sBuilder.Append(hashValue[i].ToString("x2"));
-                        }
-
-                        existingfolder.Password = sBuilder.ToString();
-                    }
-                }
-
-                existingfolder.Password = folder.Password;
                 dbContext.SaveChanges();
             }
 
