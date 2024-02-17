@@ -1,0 +1,65 @@
+﻿@model IEnumerable<PigeonDLCore.Models.News>
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "News";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>News Index</h1>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <!--<th>
+                @Html.DisplayNameFor(model => model.IDNews)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IDUser)
+            </th>-->
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <!--<th>
+                @Html.DisplayNameFor(model => model.Content)
+            </th>-->
+            <th>
+                @Html.DisplayNameFor(model => model.DateAdded)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateAdded)
+            </td>
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id=item.IDNews }) |
+                    @Html.ActionLink("Details", "Details", new { id=item.IDNews }) |
+                    @Html.ActionLink("Delete", "Delete", new { id=item.IDNews })
+                </td>
+            }
+            else
+            {
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id=item.IDNews })
+                </td>
+            }
+        </tr>
+}
+    </tbody>
+</table>

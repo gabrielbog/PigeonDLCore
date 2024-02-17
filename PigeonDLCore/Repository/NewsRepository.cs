@@ -32,9 +32,15 @@ namespace PigeonDLCore.Repository
             return newsList;
         }
 
+        public News GetNewsByID(Guid IDNews)
+        {
+            return dbContext.News.FirstOrDefault(x => x.IDNews == IDNews);
+        }
+
         public void InsertNews(News news)
         {
             news.IDNews = Guid.NewGuid();
+            news.DateAdded = DateTime.Now;
 
             dbContext.News.Add(news);
             dbContext.SaveChanges();
@@ -50,14 +56,14 @@ namespace PigeonDLCore.Repository
                 existingNews.IDUser = news.IDUser;
                 existingNews.Title = news.Title;
                 existingNews.Content = news.Content;
-                existingNews.DateAdded = news.DateAdded;
+                existingNews.DateAdded = DateTime.Now;
                 dbContext.SaveChanges();
             }
         }
 
-        public void DeleteNews(News news)
+        public void DeleteNews(Guid IDNews)
         {
-            News existingNews = dbContext.News.FirstOrDefault(x => x.IDNews == news.IDNews);
+            News existingNews = dbContext.News.FirstOrDefault(x => x.IDNews == IDNews);
 
             if (existingNews != null)
             {

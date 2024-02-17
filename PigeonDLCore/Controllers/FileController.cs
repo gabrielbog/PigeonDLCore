@@ -10,11 +10,13 @@ namespace PigeonDLCore.Controllers
     {
         private Repository.FileRepository _fileRepository;
         private Repository.FolderRepository _folderRepository;
+        private Repository.FolderSharedRepository _folderSharedRepository;
 
         public FileController(ApplicationDbContext dbContext)
         {
             _fileRepository = new Repository.FileRepository(dbContext);
             _folderRepository = new Repository.FolderRepository(dbContext);
+            _folderSharedRepository = new Repository.FolderSharedRepository(dbContext);
         }
 
         // GET: FileController
@@ -41,11 +43,19 @@ namespace PigeonDLCore.Controllers
                     }
                     else
                     {
-                        //user doesn't have access - todo
-                        var files = _fileRepository.GetFilesByIDFolder(existingFolder.IDFolder);
-                        ViewData["Title"] = existingFolder.Name;
-                        ViewData["AllowUploadDelete"] = "false";
-                        return View("Index", files);
+                        //check if user allowed other users to access folder
+                        bool canAccess = _folderSharedRepository.CanIDUserAccesIDFolder(userID, existingFolder.IDFolder);
+                        if(canAccess)
+                        {
+                            var files = _fileRepository.GetFilesByIDFolder(existingFolder.IDFolder);
+                            ViewData["Title"] = existingFolder.Name;
+                            ViewData["AllowUploadDelete"] = "false";
+                            return View("Index", files);
+                        }
+                        else
+                        {
+                            return Unauthorized();
+                        }
                     }
                 }
                 else
@@ -253,7 +263,7 @@ namespace PigeonDLCore.Controllers
         public ActionResult Delete(string URL)
         {
             var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            bool isAdmin = User.IsInRole("Admin");
+            bool isAdmin = User.HasClaim(ClaimTypes.Role, "Admin");
 
             if (userID != null)
             {
@@ -311,6 +321,7 @@ namespace PigeonDLCore.Controllers
             {
                 string rootFolder = @".\wwwroot\files";
                 string userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                bool isAdmin = User.HasClaim(ClaimTypes.Role, "Admin");
 
                 if (userID != null)
                 {
@@ -328,7 +339,7 @@ namespace PigeonDLCore.Controllers
                             deletePerm = true;
 
                         }
-                        else if (deletePerm == true)
+                        else if (isAdmin == true)
                         {
                             deletePerm = true;
                         }
@@ -348,13 +359,20 @@ namespace PigeonDLCore.Controllers
                                 System.IO.File.Delete(filePath);
                                 _fileRepository.DeleteFile(existingFile);
 
-                                if(existingFolder != null)
+                                if(isAdmin == true)
                                 {
-                                    return RedirectToAction("Index", new { URL = existingFolder.URL });
+                                    return RedirectToAction("Index", "Home");
                                 }
                                 else
                                 {
-                                    return RedirectToAction("Index", "Home");
+                                    if (existingFolder != null)
+                                    {
+                                        return RedirectToAction("Index", new { URL = existingFolder.URL });
+                                    }
+                                    else
+                                    {
+                                        return RedirectToAction("Index", "Home");
+                                    }
                                 }
                             }
                             else

@@ -41,3 +41,10 @@
         <input type="submit" value="Download" class="btn btn-primary" />
     </form>
 </div>
+@if(User.IsInRole("Admin"))
+{
+    <hr />
+    <div>
+        @Html.ActionLink("Delete This File", "Delete", new { URL=ViewData["URL"].ToString() })
+    </div>
+}

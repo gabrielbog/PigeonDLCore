@@ -37,6 +37,14 @@ namespace PigeonDLCore.Repository
             return folderSharedList;
         }
 
+        public bool CanIDUserAccesIDFolder(string IDUser, Guid IDFolder)
+        {
+            FolderShared folderShared = dbContext.FoldersShared.FirstOrDefault(x => x.IDUser == IDUser && x.IDFolder == IDFolder);
+            if (folderShared == null)
+                return false;
+            return true;
+        }
+
         public void InsertFolderShared(FolderShared folderShared)
         {
             folderShared.IDShared = Guid.NewGuid();
