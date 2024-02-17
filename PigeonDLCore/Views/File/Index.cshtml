@@ -63,14 +63,14 @@
         @if (ViewData["AllowUploadDelete"].ToString() == "true")
         {
             <td>
-                @Html.ActionLink("Details", "Details", new { URL=item.URL }) |
+                @Html.ActionLink("Download", "Download", new { URL=item.URL }) |
                 @Html.ActionLink("Delete", "Delete", new { URL=item.URL })
             </td>
         }
         else
         {
             <td>
-                @Html.ActionLink("Details", "Details", new { URL=item.URL })
+                @Html.ActionLink("Download", "Download", new { URL=item.URL })
             </td>
         }
     </tr>

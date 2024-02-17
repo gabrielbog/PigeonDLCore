@@ -343,6 +343,10 @@ namespace PigeonDLCore.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
                     b.HasKey("IDNews");
 
                     b.HasIndex("IDUser");

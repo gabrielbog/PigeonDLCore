@@ -12,7 +12,7 @@ using PigeonDLCore.Data;
 namespace PigeonDLCore.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240217095611_DatabaseMigration")]
+    [Migration("20240217121848_DatabaseMigration")]
     partial class DatabaseMigration
     {
         /// <inheritdoc />
@@ -345,6 +345,10 @@ namespace PigeonDLCore.Data.Migrations
                     b.Property<string>("IDUser")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("IDNews");
 

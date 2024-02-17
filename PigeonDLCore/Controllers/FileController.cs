@@ -61,10 +61,66 @@ namespace PigeonDLCore.Controllers
             }
         }
 
-        // GET: FileController/Details/5
-        public ActionResult Details(int id)
+        // GET: FileController/Download
+        public ActionResult Download(string URL)
         {
-            return View();
+            var existingFile = _fileRepository.GetFileByURL(URL);
+            if (existingFile != null)
+            {
+                //everyone can download the file if they have the correct URL
+                ViewData["URL"] = URL;
+                ViewData["FileName"] = existingFile.Name;
+                return View("Download", existingFile);
+            }
+            else
+            {
+                //URL is incorrect
+                return NotFound();
+            }
+        }
+
+        // POST: FileController/Download
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Download(string URL, IFormCollection collection)
+        {
+            try
+            {
+                var existingFile = _fileRepository.GetFileByURL(URL);
+                if (existingFile != null)
+                {
+                    //everyone can download the file if they have the correct URL
+                    string rootFolder = @".\wwwroot\files";
+                    string userID = existingFile.IDUser;
+                    string folderID = existingFile.IDFolder.ToString();
+                    string fileName = existingFile.Name;
+
+                    string folderPath = rootFolder + @"\" + userID + @"\" + folderID;
+                    string filePath = folderPath + @"\" + fileName;
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        byte[] bytes = System.IO.File.ReadAllBytes(filePath);
+                        _fileRepository.IncrementDownloadCounterByURL(URL);
+                        return File(bytes, "application/octet-stream", fileName);
+                    }
+                    else
+                    {
+                        //file does not exist
+                        return NotFound();
+                    }
+                }
+                else
+                {
+                    //URL is incorrect
+                    return NotFound();
+                }
+            }
+            catch
+            {
+                ViewData["URL"] = URL;
+                return View("Download");
+            }
         }
 
         // GET: FileController/Upload
@@ -112,7 +168,7 @@ namespace PigeonDLCore.Controllers
         {
             try
             {
-                string rootFolder = @".\files";
+                string rootFolder = @".\wwwroot\files";
                 string userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 if (userID != null)
@@ -253,7 +309,7 @@ namespace PigeonDLCore.Controllers
             Console.WriteLine("URL: " + URL);
             try
             {
-                string rootFolder = @".\files";
+                string rootFolder = @".\wwwroot\files";
                 string userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 if (userID != null)

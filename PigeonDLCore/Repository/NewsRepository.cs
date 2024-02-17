@@ -27,6 +27,8 @@ namespace PigeonDLCore.Repository
                 newsList.Add(item);
             }
 
+            newsList = newsList.OrderByDescending(x => x.DateAdded).ToList();
+
             return newsList;
         }
 
@@ -46,6 +48,7 @@ namespace PigeonDLCore.Repository
             {
                 existingNews.IDNews = news.IDNews;
                 existingNews.IDUser = news.IDUser;
+                existingNews.Title = news.Title;
                 existingNews.Content = news.Content;
                 existingNews.DateAdded = news.DateAdded;
                 dbContext.SaveChanges();

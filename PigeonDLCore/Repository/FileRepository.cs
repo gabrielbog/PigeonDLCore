@@ -94,5 +94,16 @@ namespace PigeonDLCore.Repository
                 dbContext.SaveChanges();
             }
         }
+
+        public void IncrementDownloadCounterByURL(string URL)
+        {
+            File existingFile = dbContext.Files.FirstOrDefault(x => x.URL == URL);
+
+            if(existingFile != null)
+            {
+                existingFile.Downloads++;
+                dbContext.SaveChanges();
+            }
+        }
     }
 }

@@ -12,18 +12,6 @@
     <h4>Folder</h4>
     <hr />
     <dl class="row">
-        <!--<dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IDFolder)
-        </dt>-->
-        <dd class = "col-sm-10">
-            @Html.HiddenFor(model => model.IDFolder)
-        </dd>
-        <!--<dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IDUser)
-        </dt>-->
-        <dd class = "col-sm-10">
-            @Html.HiddenFor(model => model.IDUser)
-        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
@@ -36,14 +24,11 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.DateUploaded)
         </dd>
-        <!--<dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.URL)
-        </dt>-->
-        <dd class = "col-sm-10">
-            @Html.HiddenFor(model => model.URL)
-        </dd>
     </dl>
-    
+    @Html.HiddenFor(model => model.IDFolder)
+    @Html.HiddenFor(model => model.IDUser)
+    @Html.HiddenFor(model => model.URL)
+
     <form asp-action="Delete">
         <input type="submit" value="Delete" class="btn btn-danger" />
     </form>

@@ -82,6 +82,7 @@ namespace PigeonDLCore.Data.Migrations
                 {
                     IDNews = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IDUser = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "varchar(50)", nullable: false),
                     Content = table.Column<string>(type: "varchar(200)", nullable: false),
                     DateAdded = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
