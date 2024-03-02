@@ -6,35 +6,37 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div id="drop-zone">
+    <h1>@ViewData["Title"]</h1>
 
-@if (ViewData["AllowUploadDelete"].ToString() == "true")
-{
-    <p>
-        @Html.ActionLink("Upload File", "Upload", new { URL = ViewData["URL"] })
-    </p>
-}
+    @if (ViewData["AllowUploadDelete"].ToString() == "true")
+    {
+        <p>
+            @Html.ActionLink("Upload File", "Upload", new { URL = ViewData["URL"] })
+        </p>
+    }
 
-<table class="table" id="table-files">
-    <thead id="table-head">
-        <tr>
-            <th>
-                @Html.DisplayName("Name")
-            </th>
-            <th>
-                @Html.DisplayName("Size")
-            </th>
-            <th>
-                @Html.DisplayName("Downloads")
-            </th>
-            <th>
-                @Html.DisplayName("Upload Date")
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody id="table-body"></tbody>
-</table>
+    <table class="table" id="table-files">
+        <thead id="table-head">
+            <tr>
+                <th>
+                    @Html.DisplayName("Name")
+                </th>
+                <th>
+                    @Html.DisplayName("Size")
+                </th>
+                <th>
+                    @Html.DisplayName("Downloads")
+                </th>
+                <th>
+                    @Html.DisplayName("Upload Date")
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
+</div>
 
 @section Scripts {
     <script type="text/javascript" src="/js/scripts/file/generic.js"></script>

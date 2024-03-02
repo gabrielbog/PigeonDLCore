@@ -445,5 +445,68 @@ namespace PigeonDLCore.Controllers
                 return Json("Does Not Exist");
             }
         }
+
+        [HttpPost]
+        [Authorize(Roles = "User, Admin, Owner")]
+        public ActionResult UploadDragDropFiles(string URL, IFormFile file)
+        {
+            if (file == null)
+                Console.WriteLine("hi");
+            try
+            {
+                string rootFolder = @".\wwwroot\files";
+                string userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var folder = _folderRepository.GetFolderByURL(URL);
+
+                if (folder != null)
+                {
+                    //said URL is valid
+                    if (userID == folder.IDUser)
+                    {
+                        //folder creator can only create files
+                        string folderID = folder.IDFolder.ToString();
+                        string folderPath = rootFolder + @"\" + userID + @"\" + folderID;
+                        string filePath = folderPath + @"\" + file.FileName; //write file to this user's specific folder
+                        long fileSizeBytes = file.Length;
+
+                        Console.WriteLine(filePath);
+                        if (!System.IO.File.Exists(filePath))
+                        {
+                            Directory.CreateDirectory(folderPath);
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                file.CopyTo(stream);
+                            }
+
+                            Models.File dbFile = new Models.File();
+                            dbFile.IDUser = userID;
+                            dbFile.IDFolder = folder.IDFolder;
+                            dbFile.Name = file.FileName;
+                            dbFile.Size = fileSizeBytes;
+                            _fileRepository.InsertFile(dbFile);
+                            return Ok();
+                        }
+                        else
+                        {
+                            return BadRequest();
+                        }
+                    }
+                    else
+                    {
+                        //don't allow anyone else
+                        return Unauthorized();
+                    }
+                }
+                else
+                {
+                    //URL invalid
+                    return NotFound();
+                }
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
     }
 }

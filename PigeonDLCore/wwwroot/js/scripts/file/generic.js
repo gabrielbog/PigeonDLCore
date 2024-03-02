@@ -258,7 +258,51 @@ function updateBody(data) {
     page-specific functions
 */
 
+var dropArea = document.getElementById('drop-zone')
+
 var isFocused = false;
+
+dropArea.addEventListener('dragstart', function (e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+});
+
+dropArea.addEventListener('dragover', function (e) {
+    e.preventDefault();
+});
+
+dropArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+
+    if (e.dataTransfer.items.length > 1) {
+        console.log("Only one file");
+        throw new Error("Only one file");
+    }
+    else if (e.dataTransfer.items[0].kind != "file") {
+        console.log("Not a file");
+        throw new Error("Not a file");
+    }
+    else {
+        const searchParams = new URLSearchParams(window.location.search);
+        const URL = searchParams.get("URL");
+        const file = e.dataTransfer.files[0];
+
+        var formData = new FormData();
+        formData.append('URL', URL);
+        formData.append('file', file);
+
+        $.ajax({
+            url: '/File/UploadDragDropFiles',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                updateData();
+            },
+        });
+    }
+});
 
 function pageIsFocused() {
     if (isFocused == false) {
