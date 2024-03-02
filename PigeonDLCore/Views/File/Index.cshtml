@@ -11,69 +11,31 @@
 @if (ViewData["AllowUploadDelete"].ToString() == "true")
 {
     <p>
-        @Html.ActionLink("Upload File", "Upload", new { URL=ViewData["URL"] })
+        @Html.ActionLink("Upload File", "Upload", new { URL = ViewData["URL"] })
     </p>
 }
 
-<table class="table">
-    <thead>
+<table class="table" id="table-files">
+    <thead id="table-head">
         <tr>
-            <!--<th>
-                @Html.DisplayNameFor(model => model.IDFile)
+            <th>
+                @Html.DisplayName("Name")
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IDUser)
+                @Html.DisplayName("Size")
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IDFolder)
-            </th>-->
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayName("Downloads")
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Size)
-            </th>
-            <!--<th>
-                @Html.DisplayNameFor(model => model.URL)
-            </th>-->
-            <th>
-                @Html.DisplayNameFor(model => model.Downloads)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateUploaded)
+                @Html.DisplayName("Upload Date")
             </th>
             <th></th>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Size)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Downloads)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateUploaded)
-        </td>
-        @if (ViewData["AllowUploadDelete"].ToString() == "true")
-        {
-            <td>
-                @Html.ActionLink("Download", "Download", new { URL=item.URL }) |
-                @Html.ActionLink("Delete", "Delete", new { URL=item.URL })
-            </td>
-        }
-        else
-        {
-            <td>
-                @Html.ActionLink("Download", "Download", new { URL=item.URL })
-            </td>
-        }
-    </tr>
-}
-    </tbody>
+    <tbody id="table-body"></tbody>
 </table>
+
+@section Scripts {
+    <script type="text/javascript" src="/js/scripts/file/generic.js"></script>
+}

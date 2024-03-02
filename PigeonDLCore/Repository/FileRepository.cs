@@ -1,5 +1,6 @@
 ﻿using PigeonDLCore.Data;
 using PigeonDLCore.Models;
+using PigeonDLCore.Models.ViewModels;
 using System.Security.Cryptography;
 using System.Text;
 using File = PigeonDLCore.Models.File;
@@ -20,7 +21,7 @@ namespace PigeonDLCore.Repository
             this.dbContext = dbContext;
         }
 
-        //operations
+        //Normal queries for Razor pages
         public List<File> GetFilesByIDFolder(Guid IDFolder)
         {
             List<File> fileList = new List<File>();
@@ -104,6 +105,29 @@ namespace PigeonDLCore.Repository
                 existingFile.Downloads++;
                 dbContext.SaveChanges();
             }
+        }
+
+        //Json-oriented queries for dynamic pages
+        public List<FileView> GetViewFilesByIDFolder(Guid IDFolder)
+        {
+            List<FileView> fileList = new List<FileView>();
+
+            foreach (File item in this.dbContext.Files)
+            {
+                if (item.IDFolder == IDFolder)
+                {
+                    fileList.Add(new FileView
+                    {
+                        Name = item.Name,
+                        DateUploaded = item.DateUploaded.ToString(),
+                        Size = item.Size,
+                        URL = item.URL,
+                        Downloads = item.Downloads,
+                        ShowDelete = false
+                    });
+                }
+            }
+            return fileList;
         }
     }
 }

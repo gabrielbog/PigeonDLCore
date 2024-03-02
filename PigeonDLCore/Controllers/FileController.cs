@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PigeonDLCore.Data;
 using PigeonDLCore.Models;
+using System.Data;
 using System.Security.Claims;
 
 namespace PigeonDLCore.Controllers
@@ -19,55 +21,49 @@ namespace PigeonDLCore.Controllers
             _folderSharedRepository = new Repository.FolderSharedRepository(dbContext);
         }
 
+        /*
+            Normal result functions
+        */
+
         // GET: FileController
+        [Authorize(Roles = "User, Admin, Owner")]
         public ActionResult Index(string URL)
         {
             var userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Folder existingFolder = _folderRepository.GetFolderByURL(URL);
 
-            if (userID != null)
+            if (existingFolder != null)
             {
-                //user is logged in
-                Folder existingFolder = _folderRepository.GetFolderByURL(URL);
-
-                if (existingFolder != null)
+                //said URL is valid
+                if (userID == existingFolder.IDUser)
                 {
-                    //said URL is valid
-                    if (userID == existingFolder.IDUser)
-                    {
-                        //let user access files if they created the folder
-                        var files = _fileRepository.GetFilesByIDFolder(existingFolder.IDFolder);
-                        ViewData["Title"] = existingFolder.Name;
-                        ViewData["AllowUploadDelete"] = "true";
-                        ViewData["URL"] = URL;
-                        return View("Index", files);
-                    }
-                    else
-                    {
-                        //check if user allowed other users to access folder
-                        bool canAccess = _folderSharedRepository.CanIDUserAccesIDFolder(userID, existingFolder.IDFolder);
-                        if(canAccess)
-                        {
-                            var files = _fileRepository.GetFilesByIDFolder(existingFolder.IDFolder);
-                            ViewData["Title"] = existingFolder.Name;
-                            ViewData["AllowUploadDelete"] = "false";
-                            return View("Index", files);
-                        }
-                        else
-                        {
-                            return Unauthorized();
-                        }
-                    }
+                    //let user access files if they created the folder
+                    ViewData["Title"] = existingFolder.Name;
+                    ViewData["AllowUploadDelete"] = "true";
+                    ViewData["URL"] = URL;
+                    return View("Index");
                 }
                 else
                 {
-                    //URL is incorrect
-                    return NotFound();
+                    //check if user allowed other users to access folder
+                    bool canAccess = _folderSharedRepository.CanIDUserAccesIDFolder(userID, existingFolder.IDFolder);
+                    if(canAccess)
+                    {
+                        //var files = _fileRepository.GetFilesByIDFolder(existingFolder.IDFolder);
+                        ViewData["Title"] = existingFolder.Name;
+                        ViewData["AllowUploadDelete"] = "false";
+                        return View("Index");
+                    }
+                    else
+                    {
+                        return Unauthorized();
+                    }
                 }
             }
             else
             {
-                //user is guest
-                return Unauthorized();
+                //URL is incorrect
+                return NotFound();
             }
         }
 
@@ -404,6 +400,49 @@ namespace PigeonDLCore.Controllers
             {
                 ViewData["URL"] = URL; //i can't delete the file otherwise
                 return View("Delete");
+            }
+        }
+
+        /*
+            Json functions
+        */
+        [HttpGet]
+        [Authorize(Roles = "User, Admin, Owner")]
+        public ActionResult GetFilesJson(string URL)
+        {
+            var folder = _folderRepository.GetFolderByURL(URL);
+            if(folder != null)
+            {
+                var viewList = _fileRepository.GetViewFilesByIDFolder(folder.IDFolder);
+                string userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                bool canAccess = _folderSharedRepository.CanIDUserAccesIDFolder(userID, folder.IDFolder);
+                bool isAdmin = User.HasClaim(ClaimTypes.Role, "Admin");
+
+                //is user same user?
+                if (userID == folder.IDUser)
+                {
+                    foreach (var elem in viewList)
+                    {
+                        elem.ShowDelete = true;
+                    }
+                    return Json(viewList);
+                }
+                else
+                {   
+                    //can another user access folder?
+                    if (canAccess || isAdmin)
+                    {
+                        return Json(viewList);
+                    }
+                    else
+                    {
+                        return Json("Unauthorized");
+                    }
+                }
+            }
+            else
+            {
+                return Json("Does Not Exist");
             }
         }
     }

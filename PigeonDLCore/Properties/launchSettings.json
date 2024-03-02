@@ -1,21 +1,13 @@
-﻿{
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:57753",
-      "sslPort": 44387
-    }
-  },
+{
   "profiles": {
     "PigeonDLCore": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7263;http://localhost:5263",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT,   ConnectionStrings__DefaultConnection= Data Source=DESKTOP-K19KSJD;Initial Catalog=PigeonDLCore;Integrated Security=True;MultipleActiveResultSets=True": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7263;http://localhost:5263"
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -23,6 +15,14 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:57753",
+      "sslPort": 44387
     }
   }
 }
